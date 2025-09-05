@@ -1,19 +1,18 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { postSchema } from "@/validation";
 import Button from "@/app/components/ui/Button";
 import Modal from "@/app/components/ui/Modal";
 import Form from "@/app/components/ui/Form";
-import {postSchema} from "@/validation";
 
-function PostActions({ id, setPostData }: {id: string, setPostData: (id: string) => void}) {
+function PostActions({ id, postData, setPostData }: {id: string, postData: Record<string, string>, setPostData: (id: string) => void}) {
     const formRef = useRef(null);
     const router = useRouter();
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const formItems = {
         author: "",
@@ -95,6 +94,7 @@ function PostActions({ id, setPostData }: {id: string, setPostData: (id: string)
                     formItems={formItems}
                     onFinish={handleEdit}
                     validationSchema={postSchema}
+                    initialValues={postData}
                 />
             </Modal>
         </div>
