@@ -1,16 +1,19 @@
 'use client'
 
 import React from 'react';
-import {formatDate} from "@/helpers/formateDate";
+import { formatDate } from "@/helpers/formateDate";
 import Link from "next/link";
 import AddPost from "@/app/components/AddPost";
+import Search from "@/app/components/Search";
+import EmptyData from "@/app/components/ui/EmptyData";
 
-function Blogs({data}) {
+function Blogs({ data }) {
     const [posts, setPosts] = React.useState(data);
     return (
         <div>
             <AddPost setPosts={setPosts} />
-            <div className="flex flex-col w-200 mx-auto  gap-8">
+            <Search setPosts={setPosts} />
+            {posts.length ? (<div className="flex flex-col w-200 mx-auto  gap-8">
                 {posts.map((item: any, index: number) => (
                     <div
                         key={index}
@@ -18,7 +21,7 @@ function Blogs({data}) {
                     >
                         <div className="p-6 flex flex-col flex-grow">
                             <div className="flex justify-between items-center text-xs text-gray-500 mb-3">
-                                <span>{item?.author }</span>
+                                <span>{item?.author}</span>
                                 <span>{formatDate(item?.createdAt)}</span>
                             </div>
                             <h2 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
@@ -31,8 +34,11 @@ function Blogs({data}) {
                             </p>
                         </div>
                     </div>
+
                 ))}
-            </div>
+            </div>) : (
+                <EmptyData label='No results found' />
+            )}
         </div>
     );
 }
