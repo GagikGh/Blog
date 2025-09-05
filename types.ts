@@ -1,3 +1,6 @@
+import React from "react";
+import Joi from "joi";
+
 export interface ModalProps {
     title: string;
     isOpen: boolean;
@@ -5,3 +8,26 @@ export interface ModalProps {
     onConfirm: () => void;
     children: React.ReactNode;
 }
+
+export interface FormProps {
+    formItems: Record<string, string>,
+    validationSchema: Joi.Schema,
+    onFinish: (updatedData: Post | Record<string, FormDataEntryValue>) => Promise<void>,
+    initialValues?: Post,
+}
+
+export interface Post {
+    author: string;
+    title: string;
+    content: string;
+    createdAt: number,
+    description: string;
+    id: string;
+    image: string;
+    url: string;
+}
+
+export type PostProps = {
+    data: Post;
+    id: string;
+};

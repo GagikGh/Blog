@@ -1,15 +1,16 @@
 'use client'
 
-import React, { useState, useRef } from 'react';
-import Link from "next/link";
+import { useState, useRef } from 'react';
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Form, { FormRef } from "@/app/components/ui/Form";
+import { Post } from "@/types";
 import { postSchema } from "@/validation";
 import Button from "@/app/components/ui/Button";
 import Modal from "@/app/components/ui/Modal";
-import Form from "@/app/components/ui/Form";
 
-function PostActions({ id, postData, setPostData }: {id: string, postData: Record<string, string>, setPostData: (id: string) => void}) {
-    const formRef = useRef(null);
+function PostActions({ id, postData, setPostData }: {id: string, postData: Post, setPostData: (post: Post) => void}) {
+    const formRef = useRef<FormRef>(null);
     const router = useRouter();
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -20,7 +21,7 @@ function PostActions({ id, postData, setPostData }: {id: string, postData: Recor
         description: "",
     }
 
-    const handleEdit = async (updatedData) => {
+    const handleEdit = async (updatedData: Post) => {
         try {
             const apiUrl = `https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts/${id}`;
 

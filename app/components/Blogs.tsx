@@ -1,20 +1,43 @@
 'use client'
 
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { formatDate } from "@/helpers/formateDate";
 import Link from "next/link";
 import AddPost from "@/app/components/AddPost";
 import Search from "@/app/components/Search";
 import EmptyData from "@/app/components/ui/EmptyData";
+import { Post } from "@/types";
+import Pagination from "@/app/components/Pagination";
 
-function Blogs({ data }) {
-    const [posts, setPosts] = React.useState(data);
+function Blogs({ data }: { data: Post[] }) {
+    const totalPages = 3;
+    const initialRef = useRef(false);
+    const [posts, setPosts] = useState(data);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const changePage = async (page: number) => {
+        const res = await fetch(
+            `https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts?limit=10&page=${page}`,
+        );
+        const data = await res.json();
+        setPosts(data);
+    }
+
+    useEffect(() => {
+        if (initialRef.current){
+            changePage(currentPage);
+        } else {
+            initialRef.current = true;
+        }
+
+    },[currentPage]);
+
     return (
         <div>
             <AddPost setPosts={setPosts} />
             <Search setPosts={setPosts} />
             {posts.length ? (<div className="flex flex-col w-200 mx-auto  gap-8">
-                {posts.map((item: any, index: number) => (
+                {posts.map((item: Post, index: number) => (
                     <div
                         key={index}
                         className="bg-white rounded-2xl  overflow-hidden shadow-md hover:shadow-xl transition-shadow flex flex-col"
@@ -39,6 +62,7 @@ function Blogs({ data }) {
             </div>) : (
                 <EmptyData label='No results found' />
             )}
+            <Pagination totalPages={totalPages} current={currentPage} setCurrentPage={setCurrentPage} />
         </div>
     );
 }

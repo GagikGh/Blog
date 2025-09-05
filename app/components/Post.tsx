@@ -1,12 +1,13 @@
 'use client'
 
-import React from 'react';
+import { useState } from 'react';
 import { formatDate } from "@/helpers/formateDate";
+import { PostProps} from "@/types";
 import PostActions from "@/app/components/postActions";
 
-function Post({ data, id }) {
-    const [postData, setPostData] = React.useState(data);
-    console.log(data, postData);
+function Post({ data, id }: PostProps) {
+    const [postData, setPostData] = useState(data);
+
     return (
         <div className="relative max-w-3xl mx-auto p-6 ">
 

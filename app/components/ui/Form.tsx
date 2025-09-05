@@ -1,19 +1,51 @@
-'use client'
+"use client";
 
-import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import type { ValidationErrorItem } from "joi";
+import React, {
+    forwardRef,
+    useImperativeHandle,
+    useRef,
+    useState,
+    ForwardedRef,
+} from "react";
 
-const Form = forwardRef(({ formItems, validationSchema, onFinish, initialValues }, ref) =>{
+import Joi, { ValidationErrorItem } from "joi";
+
+export type FormRef = {
+    submitForm: () => void;
+};
+
+export type FormProps<T> = {
+    formItems: Record<string, string>;
+    validationSchema: Joi.Schema;
+    onFinish: (data: T) => void | Promise<void>;
+    initialValues?: Partial<T>;
+};
+
+const Form = forwardRef(<T,>(
+    {
+        formItems,
+        validationSchema,
+        onFinish,
+        initialValues,
+    }: FormProps<T>,
+    ref: ForwardedRef<FormRef>
+) => {
     const formRef = useRef<HTMLFormElement>(null);
 
-    const getErrorsObject = (): Record<string, boolean> => {
-        return Object.keys(formItems).reduce<Record<string, boolean>>((acc, key) => {
-            acc[key] = false;
-            return acc;
-        }, {});
+    // Errors: record<string, string|null>
+    const getErrorsObject = (): Record<string, string | null> => {
+        return Object.keys(formItems).reduce<Record<string, string | null>>(
+            (acc, key) => {
+                acc[key] = null;
+                return acc;
+            },
+            {}
+        );
     };
 
-    const [errors, setErrors] = useState(getErrorsObject());
+    const [errors, setErrors] = useState<Record<string, string | null>>(
+        getErrorsObject()
+    );
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
         if (e.key === "Enter") {
@@ -23,12 +55,12 @@ const Form = forwardRef(({ formItems, validationSchema, onFinish, initialValues 
     };
 
     const onSubmit = () => {
-        const formData = new FormData(formRef?.current || undefined);
+        if (!formRef.current) return;
 
-        const dataObject: Record<string, FormDataEntryValue> = {};
-        for (const [key, value] of formData.entries()) {
-            dataObject[key] = value;
-        }
+        const formData = new FormData(formRef.current);
+
+        // Convert FormData to generic object T
+        const dataObject = Object.fromEntries(formData.entries()) as unknown as T;
 
         const valid = handleValidate(dataObject);
 
@@ -37,15 +69,17 @@ const Form = forwardRef(({ formItems, validationSchema, onFinish, initialValues 
         }
     };
 
-    const handleValidate = (formData: Record<string, FormDataEntryValue>): boolean => {
-        const { error } = validationSchema.validate(formData, { abortEarly: false });
+    const handleValidate = (formData: T): boolean => {
+        const { error } = validationSchema.validate(formData, {
+            abortEarly: false,
+        });
 
         if (!error) {
-            setErrors({});
+            setErrors(getErrorsObject());
             return true;
         }
 
-        const newErrors = {};
+        const newErrors: Record<string, string | null> = getErrorsObject();
 
         error.details.forEach((err: ValidationErrorItem) => {
             const key = err.path[0] as string;
@@ -56,12 +90,16 @@ const Form = forwardRef(({ formItems, validationSchema, onFinish, initialValues 
         return false;
     };
 
-    useImperativeHandle(ref, ()=> ({
+    useImperativeHandle(ref, () => ({
         submitForm: onSubmit,
-    }))
+    }));
 
     return (
-        <form ref={formRef} className="flex flex-col mx-auto gap-5 items-start w-full" onKeyDown={handleKeyDown}>
+        <form
+            ref={formRef}
+            className="flex flex-col mx-auto gap-5 items-start w-full"
+            onKeyDown={handleKeyDown}
+        >
             {Object.keys(formItems).map((formItem) => (
                 <div key={formItem} className="w-full">
                     <label className="flex flex-col gap-2 w-full font-medium">
@@ -69,25 +107,29 @@ const Form = forwardRef(({ formItems, validationSchema, onFinish, initialValues 
                         <input
                             type="text"
                             name={formItem}
-                            defaultValue={ initialValues && typeof initialValues === "object" && !Array.isArray(initialValues)
-                                ? (initialValues as Record<string, string>)[formItem] ?? ""
-                                : ""
+                            defaultValue={
+                                initialValues &&
+                                typeof initialValues === "object" &&
+                                !Array.isArray(initialValues)
+                                    ? (initialValues as Record<string, string>)[formItem] ?? ""
+                                    : ""
                             }
-
                             className={`border rounded-lg px-3 py-2 outline-none transition-colors w-full ${
-                                errors[formItem] ? "border-red-500 focus:ring-red-300" : "border-gray-200 focus:border-blue-500 focus:ring-blue-300"
+                                errors[formItem]
+                                    ? "border-red-500 focus:ring-red-300"
+                                    : "border-gray-200 focus:border-blue-500 focus:ring-blue-300"
                             }`}
                         />
                     </label>
                     {errors[formItem] && (
                         <span className="text-sm text-red-500 mt-1">{errors[formItem]}</span>
                     )}
-                    <button type="submit"/>
                 </div>
             ))}
         </form>
     );
-})
+});
+
+Form.displayName = "Form";
 
 export default Form;
-

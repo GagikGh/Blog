@@ -1,24 +1,24 @@
 'use client'
 
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { postSchema } from "@/validation";
+import { Post } from "@/types";
 import Button from "@/app/components/ui/Button";
 import Modal from "@/app/components/ui/Modal";
-import Form from "@/app/components/ui/Form";
-import { postSchema } from "@/validation";
+import Form, { FormRef } from "@/app/components/ui/Form";
 
-function AddPost({ setPosts }) {
-    const formRef = useRef(null);
+function AddPost({ setPosts }: { setPosts: (posts: Post[]) => void }){
+    const formRef = useRef<FormRef>(null);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const formItems = {
+    const formItems: Record<string, string> = {
         author: "",
         title: "",
         description: "",
     }
 
-    const handleAdd = async (newPost) => {
+    const handleAdd = async (newPost: Post) => {
         try {
             const apiUrl = `https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts`;
-
             const response = await fetch(apiUrl, {
                 method: "POST",
                 headers: {
@@ -26,9 +26,7 @@ function AddPost({ setPosts }) {
                 },
                 body: JSON.stringify(newPost),
             });
-            console.log("response", response);
             if (response.ok) {
-                console.log("success");
                 const res = await fetch(`https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts`);
                 const data = await res.json();
                 setPosts(data);
@@ -36,9 +34,7 @@ function AddPost({ setPosts }) {
             }
         } catch (error) {
             console.log(error);
-            console.log("success")
         }
-
     }
 
     return (
