@@ -1,45 +1,23 @@
 "use client";
 
-import React, {
-    forwardRef,
-    useImperativeHandle,
-    useRef,
-    useState,
-    ForwardedRef,
-} from "react";
+import React, { forwardRef, useImperativeHandle, useRef, useState, ForwardedRef } from "react";
+import { ValidationErrorItem } from "joi";
+import { FormProps, FormRef } from "@/types";
 
-import Joi, { ValidationErrorItem } from "joi";
-
-export type FormRef = {
-    submitForm: () => void;
-};
-
-export type FormProps<T> = {
-    formItems: Record<string, string>;
-    validationSchema: Joi.Schema;
-    onFinish: (data: T) => void | Promise<void>;
-    initialValues?: Partial<T>;
-};
-
-const Form = forwardRef(<T,>(
-    {
+const Form = forwardRef(({
         formItems,
         validationSchema,
         onFinish,
-        initialValues,
-    }: FormProps<T>,
-    ref: ForwardedRef<FormRef>
-) => {
+        initialValues }: FormProps, ref: ForwardedRef<FormRef>) => {
+
     const formRef = useRef<HTMLFormElement>(null);
 
-    // Errors: record<string, string|null>
     const getErrorsObject = (): Record<string, string | null> => {
         return Object.keys(formItems).reduce<Record<string, string | null>>(
             (acc, key) => {
                 acc[key] = null;
                 return acc;
-            },
-            {}
+            }, {}
         );
     };
 
@@ -59,8 +37,7 @@ const Form = forwardRef(<T,>(
 
         const formData = new FormData(formRef.current);
 
-        // Convert FormData to generic object T
-        const dataObject = Object.fromEntries(formData.entries()) as unknown as T;
+        const dataObject = Object.fromEntries(formData.entries())
 
         const valid = handleValidate(dataObject);
 
@@ -69,7 +46,7 @@ const Form = forwardRef(<T,>(
         }
     };
 
-    const handleValidate = (formData: T): boolean => {
+    const handleValidate = (formData): boolean => {
         const { error } = validationSchema.validate(formData, {
             abortEarly: false,
         });
@@ -111,7 +88,7 @@ const Form = forwardRef(<T,>(
                                 initialValues &&
                                 typeof initialValues === "object" &&
                                 !Array.isArray(initialValues)
-                                    ? (initialValues as Record<string, string>)[formItem] ?? ""
+                                    ? (initialValues as Record<string, string>)[formItem]
                                     : ""
                             }
                             className={`border rounded-lg px-3 py-2 outline-none transition-colors w-full ${

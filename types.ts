@@ -31,3 +31,7 @@ export type PostProps = {
     data: Post;
     id: string;
 };
+
+export type FormRef = {
+    submitForm: () => void;
+};

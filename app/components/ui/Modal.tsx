@@ -18,17 +18,16 @@ function Modal({isOpen, title, children, onConfirm, onCancel}: ModalProps) {
             >
                 <h2 className="text-xl font-bold">{title}</h2>
                 {children}
-
                 <div className="flex gap-4 self-end">
                     <Button
                         onClick={onCancel}
-                        type='text'
-                        label='Cancel'
+                        type="text"
+                        label="Cancel"
                     />
                     <Button
                         onClick={onConfirm}
-                        type='primary'
-                        label={`${title}`}
+                        type="primary"
+                        label={title}
                     />
                 </div>
             </div>

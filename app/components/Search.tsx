@@ -1,20 +1,18 @@
-'use client'
+"use client"
 
-import {useEffect, useRef, useState} from 'react';
-import useDebounce from "@/hooks/useDebounce";
-import { Post } from "@/types";
+import { useRef } from 'react';
+import { Post } from '@/types';
 
-function Search({ setPosts }: {setPosts: (post: Post[]) => void }) {
-    const [value, setValue] = useState('');
-    const debouncedValue = useDebounce(value);
-    const initialRef = useRef<boolean>(false);
+function Search({ setPosts }: { setPosts: (post: Post[]) => void }) {
+    const inputRef = useRef<HTMLInputElement | null>(null);
+    const initialRef = useRef(false);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const handleSearch = async () => {
+    const handleSearch = async (value: string) => {
         try {
-            const response = await fetch(`https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts?search=${debouncedValue}`);
+            const response = await fetch(`https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts?search=${value}`);
             if (response.ok) {
                 const data = await response.json();
-
                 setPosts(data);
             } else {
                 setPosts([]);
@@ -24,31 +22,27 @@ function Search({ setPosts }: {setPosts: (post: Post[]) => void }) {
         }
     }
 
-    useEffect(() => {
-        if (initialRef.current){
-
-            handleSearch()
-        } else {
-            initialRef.current = true;
+    const handleChange = () => {
+        const value = inputRef.current?.value || '';
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
         }
-
-    }, [debouncedValue])
+        timerRef.current = setTimeout(() => {
+            if (!initialRef.current) {
+                initialRef.current = true;
+            }
+            handleSearch(value);
+        }, 500);
+    }
 
     return (
-        <div className="border border-gray-200 rounded-md py-1">
+        <div className="border border-gray-200 w-200 mx-auto rounded-md py-1">
             <input
                 className="focus:outline-none px-3 py-1 w-full"
                 placeholder="Search by cities..."
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
+                ref={inputRef}
+                onChange={handleChange}
             />
-            {/*<button*/}
-            {/*    className="border-l border-gray-200 px-2 py-1 hover:text-yellow-200"*/}
-            {/*    onClick={() => {setValue("")*/}
-            {/*    }}*/}
-            {/*>*/}
-            {/*    Search*/}
-            {/*</button>*/}
         </div>
     );
 }
