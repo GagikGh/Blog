@@ -12,6 +12,7 @@ import Modal from "@/app/components/ui/Modal";
 function PostActions({ id, postData, setPostData }: { id: string, postData: Post, setPostData: (post: Post) => void }) {
     const formRef = useRef<FormRef>(null);
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -23,6 +24,7 @@ function PostActions({ id, postData, setPostData }: { id: string, postData: Post
 
     const handleEdit = async (updatedData: Post) => {
         try {
+            setIsLoading(true);
             const apiUrl = `https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts/${id}`;
             const response = await fetch(apiUrl, {
                 method: "PUT",
@@ -39,11 +41,14 @@ function PostActions({ id, postData, setPostData }: { id: string, postData: Post
             }
         } catch (error) {
             throw error;
+        } finally {
+            setIsLoading(false);
         }
     }
 
     const handleDelete = async (id: string) => {
         try {
+            setIsLoading(true);
             const apiUrl = `https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts/${id}`;
             const response = await fetch(apiUrl, {
                 method: "DELETE",
@@ -54,6 +59,8 @@ function PostActions({ id, postData, setPostData }: { id: string, postData: Post
             }
         } catch (error) {
             throw error;
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -68,6 +75,7 @@ function PostActions({ id, postData, setPostData }: { id: string, postData: Post
             </div>
             <Modal
                 isOpen={isDeleteModalOpen}
+                disabled={isLoading}
                 onCancel={() => setIsDeleteModalOpen(false)}
                 onConfirm={() => handleDelete(id)}
                 title="Delete Post"
@@ -76,6 +84,7 @@ function PostActions({ id, postData, setPostData }: { id: string, postData: Post
             </Modal>
             <Modal
                 isOpen={isEditModalOpen}
+                disabled={isLoading}
                 onCancel={() => setIsEditModalOpen(false)}
                 onConfirm={() => formRef?.current?.submitForm()}
                 title="Edit Post"

@@ -5,12 +5,12 @@ import { Post } from '@/types';
 
 function Search({ setPosts }: { setPosts: (post: Post[]) => void }) {
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const initialRef = useRef(false);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleSearch = async (value: string) => {
         try {
-            const response = await fetch(`https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts?search=${value}`);
+            const response = await fetch(`https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts?search=${value}&limit=10&page=1`);
+
             if (response.ok) {
                 const data = await response.json();
                 setPosts(data);
@@ -23,14 +23,11 @@ function Search({ setPosts }: { setPosts: (post: Post[]) => void }) {
     }
 
     const handleChange = () => {
-        const value = inputRef.current?.value || '';
         if (timerRef.current) {
             clearTimeout(timerRef.current);
         }
         timerRef.current = setTimeout(() => {
-            if (!initialRef.current) {
-                initialRef.current = true;
-            }
+            const value = inputRef.current?.value || '';
             handleSearch(value);
         }, 500);
     }

@@ -1,6 +1,7 @@
 import Post from "@/app/components/Post";
 
 export default async function PostPage({ params }: { params: { id: string } }) {
+
     const res = await fetch(
         `https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts/${params.id}`
     );

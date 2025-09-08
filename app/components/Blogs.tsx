@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from "react";
 import { formatDate } from "@/helpers/formateDate";
 import Link from "next/link";
 import AddPost from "@/app/components/AddPost";
@@ -8,10 +8,10 @@ import Search from "@/app/components/Search";
 import EmptyData from "@/app/components/ui/EmptyData";
 import { Post } from "@/types";
 import Pagination from "@/app/components/Pagination";
+import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 
 function Blogs({ data }: { data: Post[] }) {
     const totalPages = 3;
-    const initialRef = useRef(false);
     const [posts, setPosts] = useState(data);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -23,13 +23,10 @@ function Blogs({ data }: { data: Post[] }) {
         setPosts(data);
     }
 
-    useEffect(() => {
-        if (initialRef.current){
-            changePage(currentPage);
-        } else {
-            initialRef.current = true;
-        }
-    }, [currentPage]);
+    const handleChangePage = (page: number) => {
+        setCurrentPage(page);
+        changePage(page);
+    };
 
     return (
         <div>
@@ -63,7 +60,7 @@ function Blogs({ data }: { data: Post[] }) {
                 : (
                 <EmptyData label='No results found' />
             )}
-            <Pagination totalPages={totalPages} current={currentPage} setCurrentPage={setCurrentPage} />
+            <Pagination totalPages={totalPages} current={currentPage} handleChangePage={handleChangePage} />
         </div>
     );
 }

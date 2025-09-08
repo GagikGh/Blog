@@ -1,14 +1,16 @@
 'use client'
 
-import { useRef, useState } from 'react';
+import { useRef, useState } from "react";
 import { postSchema } from "@/validation";
-import { Post } from "@/types";
+import { FormRef, Post } from "@/types";
 import Button from "@/app/components/ui/Button";
 import Modal from "@/app/components/ui/Modal";
-import Form, { FormRef } from "@/app/components/ui/Form";
+import Form from "@/app/components/ui/Form";
+import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 
 function AddPost({ setPosts }: { setPosts: (posts: Post[]) => void }){
     const formRef = useRef<FormRef>(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const formItems: Record<string, string> = {
         author: "",
@@ -18,6 +20,7 @@ function AddPost({ setPosts }: { setPosts: (posts: Post[]) => void }){
 
     const handleAdd = async (newPost: Post) => {
         try {
+            setIsLoading(true);
             const apiUrl = `https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts`;
             const response = await fetch(apiUrl, {
                 method: "POST",
@@ -26,6 +29,7 @@ function AddPost({ setPosts }: { setPosts: (posts: Post[]) => void }){
                 },
                 body: JSON.stringify(newPost),
             });
+
             if (response.ok) {
                 const res = await fetch(`https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts`);
                 const data = await res.json();
@@ -34,6 +38,8 @@ function AddPost({ setPosts }: { setPosts: (posts: Post[]) => void }){
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -47,6 +53,7 @@ function AddPost({ setPosts }: { setPosts: (posts: Post[]) => void }){
             />
             <Modal
                 isOpen={isAddModalOpen}
+                disabled={isLoading}
                 onCancel={() => setIsAddModalOpen(false)}
                 onConfirm={()=> formRef?.current?.submitForm()}
                 title="Add Post"
