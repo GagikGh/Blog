@@ -26,26 +26,23 @@ Welcome to the **Blog Platform project** — a modern, full-stack blogging appli
 
 ### 1. Clone the Repository
 
-```bash
 git clone https://github.com/GagikGh/Blog.git
 cd Blog
-2. Install Dependencies
-bash
-Copy code
+
+### 2. Install Dependencies
 npm install
 # or
 yarn install
 # or
 pnpm install
-3. Configure Environment Variables
+
+### 3. Configure Environment Variables
 Create a .env.local file in the root directory:
 
 env
-Copy code
 NEXT_PUBLIC_BBC_API_KEY=your_mockapi_key_here
-4. Run the Development Server
-bash
-Copy code
+
+### 4. Run the Development Server
 npm run dev
 # or
 yarn dev
@@ -53,7 +50,7 @@ yarn dev
 pnpm dev
 Open http://localhost:3000 in your browser to view the app.
 
-Folder Structure
+### Folder Structure
 bash
 Copy code
 /app

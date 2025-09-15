@@ -33,14 +33,17 @@ interface ButtonProps {
     size?: keyof typeof sizeStyles;
     label?: string | React.ReactNode;
     color?: string,
+    disabled?: boolean,
     onClick?: () => void;
 }
 
-function Button({ type = "default", size = "middle", label = "Custom Button", onClick }: ButtonProps) {
+function Button({ type = "default", size = "middle", label = "Custom Button", disabled, onClick }: ButtonProps) {
+    console.log(disabled)
     return (
         <button
-            className={`${typeStyles[type]} ${sizeStyles[size]}`}
+            className={`w-fit ${typeStyles[type]} ${sizeStyles[size]}`}
             onClick={onClick}
+            disabled={disabled}
         >
             {label}
         </button>

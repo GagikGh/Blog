@@ -3,9 +3,10 @@
 import { createPortal } from "react-dom";
 import { ModalProps } from "@/types";
 import Button from "./Button";
+import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 
 
-function Modal({isOpen, title, children, onConfirm, onCancel}: ModalProps) {
+function Modal({isOpen, disabled, title, children, onConfirm, onCancel}: ModalProps) {
 
     return isOpen && createPortal(
         <div>
@@ -18,17 +19,17 @@ function Modal({isOpen, title, children, onConfirm, onCancel}: ModalProps) {
             >
                 <h2 className="text-xl font-bold">{title}</h2>
                 {children}
-
                 <div className="flex gap-4 self-end">
                     <Button
                         onClick={onCancel}
-                        type='text'
-                        label='Cancel'
+                        type="text"
+                        label="Cancel"
                     />
                     <Button
                         onClick={onConfirm}
-                        type='primary'
-                        label={`${title}`}
+                        type="primary"
+                        disabled={disabled}
+                        label={disabled ? <LoadingSpinner size="small" indicator="spinner" /> : title}
                     />
                 </div>
             </div>
