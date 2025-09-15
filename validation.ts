@@ -1,14 +1,24 @@
 import Joi from "joi";
 
 export const postSchema = Joi.object({
-    author: Joi.string()
-        .min(2)
+    firstname: Joi.string()
+        .min(1)
         .max(30)
         .required()
         .messages({
-            "string.empty": "Author's name is required",
-            "string.min": "Author's name must be at least 2 characters",
-            "string.max": "Author's name cannot exceed 30 characters"
+            "string.empty": "Firstname is required",
+            "string.min": "Firstname must be at least 2 characters",
+            "string.max": "Firstname cannot exceed 30 characters"
+        }),
+
+    lastname: Joi.string()
+        .min(1)
+        .max(30)
+        .required()
+        .messages({
+            "string.empty": "Lastname is required",
+            "string.min": "Lastname must be at least 2 characters",
+            "string.max": "Lastname cannot exceed 30 characters"
         }),
 
     title: Joi.string()

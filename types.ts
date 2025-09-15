@@ -17,15 +17,18 @@ export interface FormProps {
     initialValues?: Post,
 }
 
+
 export interface Post {
-    author: string;
     title: string;
-    content: string;
-    createdAt: number,
+    created_at: number,
     description: string;
     id: string;
-    image: string;
-    url: string;
+}
+
+export interface Posts {
+    total: number;
+    totalPages: number;
+    items: Post[];
 }
 
 export type PostProps = {

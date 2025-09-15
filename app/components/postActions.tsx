@@ -17,7 +17,8 @@ function PostActions({ id, postData, setPostData }: { id: string, postData: Post
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const formItems = {
-        author: "",
+        firstname: "",
+        lastname: "",
         title: "",
         description: "",
     }
@@ -25,7 +26,7 @@ function PostActions({ id, postData, setPostData }: { id: string, postData: Post
     const handleEdit = async (updatedData: Post) => {
         try {
             setIsLoading(true);
-            const apiUrl = `https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts/${id}`;
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`;
             const response = await fetch(apiUrl, {
                 method: "PUT",
                 headers: {
@@ -34,7 +35,7 @@ function PostActions({ id, postData, setPostData }: { id: string, postData: Post
                 body: JSON.stringify(updatedData),
             });
             if (response.ok) {
-                const res = await fetch(`https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts/${id}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`);
                 const data = await res.json();
                 setPostData(data);
                 setIsEditModalOpen(false);
@@ -49,13 +50,13 @@ function PostActions({ id, postData, setPostData }: { id: string, postData: Post
     const handleDelete = async (id: string) => {
         try {
             setIsLoading(true);
-            const apiUrl = `https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts/${id}`;
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`;
             const response = await fetch(apiUrl, {
                 method: "DELETE",
             });
             if (response.ok) {
                 setIsDeleteModalOpen(false);
-                router.push("/");
+                router.push("/")
             }
         } catch (error) {
             throw error;

@@ -38,7 +38,6 @@ interface ButtonProps {
 }
 
 function Button({ type = "default", size = "middle", label = "Custom Button", disabled, onClick }: ButtonProps) {
-    console.log(disabled)
     return (
         <button
             className={`w-fit ${typeStyles[type]} ${sizeStyles[size]}`}

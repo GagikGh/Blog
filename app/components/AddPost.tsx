@@ -6,22 +6,22 @@ import { FormRef, Post } from "@/types";
 import Button from "@/app/components/ui/Button";
 import Modal from "@/app/components/ui/Modal";
 import Form from "@/app/components/ui/Form";
-import LoadingSpinner from "@/app/components/ui/LoadingSpinner";
 
-function AddPost({ setPosts }: { setPosts: (posts: Post[]) => void }){
+function AddPost({ setPosts, setTotalPages }: { setPosts: (posts: Post[]) => void, setTotalPages: (totalPages: number) => void }) {
     const formRef = useRef<FormRef>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const formItems: Record<string, string> = {
-        author: "",
+        firstname: "",
+        lastname: "",
         title: "",
         description: "",
-    }
+    };
 
     const handleAdd = async (newPost: Post) => {
         try {
             setIsLoading(true);
-            const apiUrl = `https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts`;
+            const apiUrl = `http://localhost:4000/posts`;
             const response = await fetch(apiUrl, {
                 method: "POST",
                 headers: {
@@ -31,9 +31,10 @@ function AddPost({ setPosts }: { setPosts: (posts: Post[]) => void }){
             });
 
             if (response.ok) {
-                const res = await fetch(`https://${process.env.NEXT_PUBLIC_BBC_API_KEY}.mockapi.io/posts`);
+                const res = await fetch(`http://localhost:4000/posts`);
                 const data = await res.json();
-                setPosts(data);
+                setPosts(data.items);
+                setTotalPages(data.totalPages);
                 setIsAddModalOpen(false);
             }
         } catch (error) {
