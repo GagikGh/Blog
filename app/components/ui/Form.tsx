@@ -83,6 +83,7 @@ const Form = forwardRef(({
                         {formItem.charAt(0).toUpperCase() + formItem.slice(1)}:
                         <input
                             type="text"
+                            placeholder={`Enter your ${formItem}`}
                             name={formItem}
                             defaultValue={
                                 initialValues &&

@@ -11,6 +11,6 @@ export default async function Page({ params }: { params: { id: string } }) {
     const postsByTag = await response.json();
 
     return (
-        <PostsByTag posts={postsByTag} />
+        <PostsByTag postsByTag={postsByTag} />
     );
 }

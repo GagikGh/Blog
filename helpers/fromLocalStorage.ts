@@ -1,0 +1,15 @@
+
+export const saveToken = (token: string) => {
+    localStorage.setItem('token', token);
+};
+
+export const getToken = () => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("token");
+};
+
+export const saveUserId = (userId: string) => {
+    localStorage.setItem('userId', userId);
+}
+
+export const getUserId = () => parseInt(localStorage.getItem("userId") || "");

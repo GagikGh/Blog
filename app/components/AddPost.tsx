@@ -6,32 +6,34 @@ import { FormRef, Post } from "@/types";
 import Button from "@/app/components/ui/Button";
 import Modal from "@/app/components/ui/Modal";
 import Form from "@/app/components/ui/Form";
+import { getToken } from "@/helpers/fromLocalStorage";
 
 function AddPost({ setPosts, setTotalPages }: { setPosts: (posts: Post[]) => void, setTotalPages: (totalPages: number) => void }) {
     const formRef = useRef<FormRef>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const formItems: Record<string, string> = {
-        firstname: "",
-        lastname: "",
         title: "",
         description: "",
     };
 
     const handleAdd = async (newPost: Post) => {
+        const token = getToken();
         try {
             setIsLoading(true);
-            const apiUrl = `http://localhost:4000/posts`;
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/posts`;
             const response = await fetch(apiUrl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
                 },
+
                 body: JSON.stringify(newPost),
             });
 
             if (response.ok) {
-                const res = await fetch(`http://localhost:4000/posts`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`);
                 const data = await res.json();
                 setPosts(data.items);
                 setTotalPages(data.totalPages);

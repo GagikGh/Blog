@@ -17,8 +17,6 @@ function PostActions({ id, postData, setPostData }: { id: string, postData: Post
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const formItems = {
-        firstname: "",
-        lastname: "",
         title: "",
         description: "",
     }

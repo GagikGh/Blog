@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 
-function Search({ handleSearch }) {
+function Search({ handleSearch }: { handleSearch: (search: string) => void }) {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 

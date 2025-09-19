@@ -1,12 +1,16 @@
-import Blogs from "@/app/components/Blogs";
+"use client";
 
-export default async function Home() {
-    const res = await fetch(`http://localhost:3000/api/posts`);
-    const data = await res.json();
-    console.log(data)
-    return (
-        <div className="max-w-5xl mx-auto p-6">
-            <Blogs data={data} />
-        </div>
-    );
-};
+import dynamic from "next/dynamic";
+const Blogs = dynamic(() => import("@/app/components/Blogs"), { ssr: false });
+
+import Tabs from "@/app/components/ui/Tabs";
+import Following from "@/app/components/FollowingPosts";
+
+const tabMenu = [
+    { name: "Blogs", content: <Blogs /> },
+    { name: "Following", content: <Following /> },
+];
+
+export default function Home() {
+    return <Tabs tabs={tabMenu} />;
+}
